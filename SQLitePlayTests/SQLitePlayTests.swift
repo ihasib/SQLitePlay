@@ -20,7 +20,7 @@ class SQLitePlayTests: XCTestCase {
     }
 
     func testDbCreation() {
-        DbManager().createDatabase()
+        dbManager.createDatabase()
     }
     
     func testDbDeletion() {
@@ -28,11 +28,18 @@ class SQLitePlayTests: XCTestCase {
     }
     
     func testCreateUserTable() {
-        dbManager.createUserTable()
+//        let table = dbManager.createUserTable()
+//        XCTAssertNotNil(table)
+
+        let loaneeTable = dbManager.createLoaneeTable()
+        XCTAssertNotNil(loaneeTable)
     }
     
     func testInsertData() {
-        dbManager.usersTable = dbManager.createUserTable()
-        dbManager.insertUserData()
+//        dbManager.usersTable = dbManager.createUserTable()
+//        dbManager.insertUserData()
+
+        dbManager.createLoaneeTable()
+        dbManager.insertLoaneeData()
     }
 }

@@ -24,7 +24,7 @@ class DbManager {
             let docUrl = getDocumentsDirectory()
             let dbFileUrl = docUrl.appendingPathComponent("db.sqlite3")
             //if FileManager.default.fileExists(atPath: dbFileUrl.path)
-            if let database = db { return database}
+            if let database = db { return database }
             let database = try Connection(dbFileUrl.path)
             return database
         } catch {
@@ -53,6 +53,7 @@ class DbManager {
             tableBuilder.column(nameCol)
         }
         do {
+            try db.run(table.drop())
             try db.run(sqlStatement)
             return table
         } catch {
@@ -61,19 +62,53 @@ class DbManager {
         }
     }
     
-    func insertUserData() {
-        guard let users = usersTable else { return }
+    func insertUserData() -> Bool {
+        guard let users = usersTable else { return false}
         let sqlStatement = users.insert(nidCol <- "19 50 47 26", nameCol <- "Hasib")
         let sqlStatement2 = users.insert(nidCol <- "19 50 47 29", nameCol <- "Hasibur")
         do {
             try db?.run(sqlStatement)
             try db?.run(sqlStatement2)
             print("Data inserted")
+            return true
         } catch {
             print(error.localizedDescription)
-            return
+            return false
         }
     }
+
+    let nid = Expression<String>("Nationa id no")
+    let name = Expression<String>("Name")
+
+    func insertLoaneeData() -> Bool {
+        guard let db = db else { return false }
+        let loaneeTable = Table("Loanee")
+        do {
+            try db.run(loaneeTable.insert(nid <- "123 456 789", name <- "Nakib"))
+            try db.run(loaneeTable.insert(nid <- "123 456 781", name <- "Hossan"))
+        } catch {
+            print(error.localizedDescription)
+        }
+        return true
+    }
+
+    func createLoaneeTable() -> Table? {
+        guard let db = db else { return nil }
+        let loaneeTable = Table("Loanee")
+        let sqlStatement = loaneeTable.create { tableBuilder in
+            tableBuilder.column(nid, primaryKey: true)
+            tableBuilder.column(name)
+        }
+        do {
+            try db.run(loaneeTable.drop())
+            try db.run(sqlStatement)
+            return loaneeTable
+        } catch {
+            print(error.localizedDescription)
+            return nil
+        }
+    }
+
 
     func getDocumentsDirectory() -> URL {
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
