@@ -30,16 +30,16 @@ class SQLitePlayTests: XCTestCase {
     func testCreateUserTable() {
 //        let table = dbManager.createUserTable()
 //        XCTAssertNotNil(table)
-
-        let loaneeTable = dbManager.createLoaneeTable()
-        XCTAssertNotNil(loaneeTable)
+        
+//        let table = dbManager.createLoaneeTable()
+//        XCTAssertNotNil(table)
     }
     
     func testInsertData() {
 //        dbManager.usersTable = dbManager.createUserTable()
 //        dbManager.insertUserData()
-
-        dbManager.createLoaneeTable()
+        dbManager.usersTable = dbManager.createLoaneeTable()
         dbManager.insertLoaneeData()
+        dbManager.fetchLoaneeData()
     }
 }

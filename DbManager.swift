@@ -76,7 +76,8 @@ class DbManager {
             return false
         }
     }
-
+    
+    
     let nid = Expression<String>("Nationa id no")
     let name = Expression<String>("Name")
 
@@ -84,7 +85,7 @@ class DbManager {
         guard let db = db else { return false }
         let loaneeTable = Table("Loanee")
         do {
-            try db.run(loaneeTable.insert(nid <- "123 456 789", name <- "Nakib"))
+            try db.run(loaneeTable.insert(nid <- "123 456 789", name <- "হাসিব"))
             try db.run(loaneeTable.insert(nid <- "123 456 781", name <- "Hossan"))
         } catch {
             print(error.localizedDescription)
@@ -100,7 +101,7 @@ class DbManager {
             tableBuilder.column(name)
         }
         do {
-            try db.run(loaneeTable.drop())
+            try db.run(loaneeTable.drop(ifExists: true))
             try db.run(sqlStatement)
             return loaneeTable
         } catch {
@@ -108,8 +109,19 @@ class DbManager {
             return nil
         }
     }
-
-
+    
+    func fetchLoaneeData() {
+        guard let db = db else { return }
+        do {
+            let loanees = try db.prepare(Table("Loanee"))
+            for loanee in loanees {
+                print(" nid = \(loanee[nid])\n name = \(loanee[name])")
+            }
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
     func getDocumentsDirectory() -> URL {
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         let documentsDirectory = paths[0]
